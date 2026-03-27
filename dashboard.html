@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FoodBridge – NGO Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ─────────────────────────────────────────────────────── */
+:root {
+  --green:#2E8B57; --green-d:#236b43; --green-l:#e8f5ee; --green-xl:#f2faf5;
+  --orange:#FFA500; --orange-l:#fff4e0; --orange-d:#cc7a00;
+  --red:#e74c3c; --red-l:#fef0ed;
+  --blue:#3b82f6; --blue-l:#eff6ff;
+  --bg:#f5f5f5; --surface:#ffffff;
+  --text:#333; --muted:#6b7280; --border:#e5e7eb;
+  --radius:8px; --radius-lg:14px;
+  --shadow:0 1px 8px rgba(0,0,0,.07);
+  --shadow-md:0 4px 20px rgba(0,0,0,.10);
+}
+
+/* ── RESET ──────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{font-family:'DM Sans',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* ── TOPBAR ─────────────────────────────────────────────────────── */
+.topbar{
+  height:60px;background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2rem;position:sticky;top:0;z-index:200;
+  box-shadow:var(--shadow);
+}
+.topbar-logo{
+  font-family:'DM Serif Display',serif;font-size:1.35rem;
+  color:var(--green);letter-spacing:-.4px;
+}
+.topbar-logo span{color:var(--orange)}
+.topbar-right{display:flex;align-items:center;gap:1rem}
+.ngo-pill{
+  display:flex;align-items:center;gap:.5rem;
+  background:var(--green-l);color:var(--green);
+  font-size:.78rem;font-weight:600;letter-spacing:.04em;
+  padding:.35rem .9rem;border-radius:99px;
+}
+.ngo-dot{width:7px;height:7px;background:var(--green);border-radius:50%}
+
+/* ── LAYOUT ─────────────────────────────────────────────────────── */
+.layout{display:flex;flex:1;min-height:0}
+
+/* ── SIDEBAR ────────────────────────────────────────────────────── */
+.sidebar{
+  width:220px;min-width:220px;background:var(--surface);
+  border-right:1px solid var(--border);padding:1.5rem 1rem;
+  display:flex;flex-direction:column;gap:.25rem;
+}
+.sidebar-label{
+  font-size:.68rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);
+  padding:.5rem .75rem;margin-bottom:.15rem;margin-top:.5rem;
+}
+.nav-item{
+  display:flex;align-items:center;gap:.65rem;
+  padding:.6rem .75rem;border-radius:var(--radius);
+  font-size:.88rem;font-weight:500;color:var(--muted);
+  cursor:pointer;transition:background .15s,color .15s;text-decoration:none;
+}
+.nav-item:hover{background:var(--bg);color:var(--text)}
+.nav-item.active{background:var(--green-l);color:var(--green);font-weight:600}
+.nav-icon{font-size:1rem;width:20px;text-align:center}
+.sidebar-footer{margin-top:auto;padding-top:1rem;border-top:1px solid var(--border)}
+
+/* ── MAIN ───────────────────────────────────────────────────────── */
+.main{flex:1;overflow:auto;padding:2rem}
+
+/* ── PAGE HEADER ────────────────────────────────────────────────── */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.75rem}
+.page-header h1{font-family:'DM Serif Display',serif;font-size:1.65rem;color:var(--text);letter-spacing:-.4px}
+.page-header p{font-size:.85rem;color:var(--muted);margin-top:.2rem}
+
+/* ── KPI CARDS ──────────────────────────────────────────────────── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.75rem}
+.kpi{
+  background:var(--surface);border-radius:var(--radius-lg);padding:1.2rem 1.4rem;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  display:flex;flex-direction:column;gap:.3rem;
+}
+.kpi-label{font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.kpi-value{font-family:'DM Serif Display',serif;font-size:1.9rem;color:var(--text)}
+.kpi-sub{font-size:.76rem;color:var(--muted)}
+.kpi.urgent .kpi-value{color:var(--orange)}
+.kpi.delivered .kpi-value{color:var(--green)}
+
+/* ── POINTS BANNER ──────────────────────────────────────────────── */
+.points-banner{
+  background:linear-gradient(120deg,var(--green),var(--green-d));
+  border-radius:var(--radius-lg);padding:1.1rem 1.6rem;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:1rem;margin-bottom:1.75rem;
+  box-shadow:0 4px 20px rgba(46,139,87,.25);
+}
+.points-left{display:flex;align-items:center;gap:1rem}
+.points-icon{font-size:2rem}
+.points-info{color:#fff}
+.points-info strong{font-size:1.05rem;display:block}
+.points-info small{font-size:.8rem;opacity:.82}
+.points-bar-wrap{flex:1;max-width:240px;background:rgba(255,255,255,.25);border-radius:99px;height:8px;overflow:hidden}
+.points-bar{height:100%;background:#fff;border-radius:99px;transition:width .6s ease}
+.reward-btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:#fff;color:var(--green);
+  padding:.5rem 1.1rem;border-radius:99px;
+  font-weight:700;font-size:.85rem;text-decoration:none;
+  transition:transform .15s,box-shadow .15s;white-space:nowrap;
+  border:none;cursor:pointer;
+}
+.reward-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.15)}
+.reward-btn.locked{opacity:.55;cursor:default;pointer-events:none}
+
+/* ── TOOLBAR ────────────────────────────────────────────────────── */
+.toolbar{
+  display:flex;align-items:center;gap:1rem;
+  background:var(--surface);border-radius:var(--radius-lg);
+  padding:.75rem 1rem;margin-bottom:1rem;
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  flex-wrap:wrap;
+}
+.search-wrap{position:relative;flex:1;min-width:180px}
+.search-wrap input{
+  width:100%;padding:.55rem .75rem .55rem 2.2rem;
+  border:1.5px solid var(--border);border-radius:var(--radius);
+  font-family:'DM Sans',sans-serif;font-size:.88rem;
+  outline:none;transition:border-color .2s;background:var(--bg);
+}
+.search-wrap input:focus{border-color:var(--green);background:#fff}
+.search-icon{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);font-size:.9rem;pointer-events:none}
+.filter-select{
+  padding:.55rem .75rem;border:1.5px solid var(--border);border-radius:var(--radius);
+  font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);
+  background:var(--bg);outline:none;cursor:pointer;
+}
+.filter-select:focus{border-color:var(--green)}
+.toolbar-right{display:flex;align-items:center;gap:.6rem;margin-left:auto}
+.count-pill{
+  font-size:.78rem;font-weight:600;color:var(--muted);
+  background:var(--bg);border:1px solid var(--border);
+  padding:.3rem .8rem;border-radius:99px;
+}
+
+/* ── TABLE CARD ─────────────────────────────────────────────────── */
+.table-card{
+  background:var(--surface);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;
+}
+.requests-table{width:100%;border-collapse:collapse}
+.requests-table thead th{
+  padding:.75rem 1rem;text-align:left;
+  font-size:.72rem;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--muted);
+  background:var(--green-xl);border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+.requests-table tbody tr{
+  border-bottom:1px solid #f3f4f6;
+  transition:background .15s;
+  animation:rowIn .35s ease both;
+}
+.requests-table tbody tr:last-child{border-bottom:none}
+.requests-table tbody tr:hover{background:#fafafa}
+.requests-table td{padding:.9rem 1rem;font-size:.88rem;vertical-align:middle}
+
+/* urgent row highlight */
+.row-urgent{background:linear-gradient(90deg,rgba(255,165,0,.06) 0%,transparent 40%)}
+.row-urgent:hover{background:linear-gradient(90deg,rgba(255,165,0,.1) 0%,transparent 40%) !important}
+
+/* ── CELL COMPONENTS ────────────────────────────────────────────── */
+.donor-cell{display:flex;align-items:center;gap:.6rem}
+.avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--green-l);color:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.8rem;font-weight:700;flex-shrink:0;
+}
+.avatar.anon{background:#f3f4f6;color:var(--muted)}
+.donor-name{font-weight:600;color:var(--text)}
+.donor-pts{font-size:.72rem;color:var(--muted)}
+
+.food-chip{
+  display:inline-flex;align-items:center;gap:.3rem;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:99px;padding:.2rem .65rem;
+  font-size:.78rem;font-weight:500;color:var(--text);
+}
+
+.badge{
+  display:inline-block;padding:.22rem .65rem;border-radius:99px;
+  font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+}
+.badge-high{background:var(--orange-l);color:var(--orange-d)}
+.badge-medium{background:var(--blue-l);color:var(--blue)}
+.badge-pending{background:#f3f4f6;color:var(--muted)}
+.badge-accepted{background:var(--blue-l);color:var(--blue)}
+.badge-delivered{background:var(--green-l);color:var(--green)}
+
+.urgent-dot{
+  display:inline-block;width:8px;height:8px;
+  background:var(--orange);border-radius:50%;
+  margin-right:.4rem;animation:pulse 1.5s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+
+.loc-cell{color:var(--muted);font-size:.84rem}
+.loc-cell span{display:flex;align-items:center;gap:.3rem}
+
+/* ── ACTION BUTTONS ─────────────────────────────────────────────── */
+.actions{display:flex;gap:.5rem;align-items:center}
+.btn{
+  padding:.42rem .9rem;border-radius:var(--radius);
+  font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;
+  cursor:pointer;border:none;transition:all .15s;white-space:nowrap;
+}
+.btn-accept{background:var(--green);color:#fff}
+.btn-accept:hover{background:var(--green-d);transform:translateY(-1px)}
+.btn-deliver{background:var(--blue-l);color:var(--blue);border:1.5px solid var(--blue)}
+.btn-deliver:hover{background:var(--blue);color:#fff;transform:translateY(-1px)}
+.btn-done{background:var(--green-l);color:var(--green);pointer-events:none;opacity:.75}
+.btn-sm-icon{
+  width:30px;height:30px;border-radius:var(--radius);
+  background:var(--bg);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.85rem;cursor:pointer;transition:background .15s;
+}
+.btn-sm-icon:hover{background:var(--red-l)}
+
+/* ── LOADING / EMPTY ────────────────────────────────────────────── */
+.table-loading{
+  padding:3rem;text-align:center;color:var(--muted);font-size:.9rem;
+}
+.spinner{
+  display:inline-block;width:22px;height:22px;
+  border:2.5px solid var(--border);border-top-color:var(--green);
+  border-radius:50%;animation:spin .7s linear infinite;
+  vertical-align:middle;margin-right:.5rem;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{padding:3rem;text-align:center}
+.empty-icon{font-size:2.5rem;margin-bottom:.5rem}
+.empty-msg{color:var(--muted);font-size:.9rem}
+
+/* ── TOAST ──────────────────────────────────────────────────────── */
+.toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;display:flex;flex-direction:column;gap:.5rem}
+.toast{
+  background:#1a1a1a;color:#fff;
+  padding:.75rem 1.2rem;border-radius:var(--radius);
+  font-size:.85rem;font-weight:500;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);
+  animation:slideIn .25s ease;display:flex;align-items:center;gap:.5rem;
+  max-width:320px;
+}
+.toast.success{border-left:3px solid var(--green)}
+.toast.error{border-left:3px solid var(--red)}
+.toast.info{border-left:3px solid var(--blue)}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes rowIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────── */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .main{padding:1rem}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .requests-table thead th:nth-child(3),.requests-table td:nth-child(3),
+  .requests-table thead th:nth-child(4),.requests-table td:nth-child(4){display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ─────────────────────────────────────────────────── -->
+<div class="topbar">
+  <div class="topbar-logo">Food<span>Bridge</span></div>
+  <div class="topbar-right">
+    <div class="ngo-pill"><div class="ngo-dot"></div>Akanksha Foundation</div>
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--green-l);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:var(--green)">AF</div>
+  </div>
+</div>
+
+<!-- ── LAYOUT ─────────────────────────────────────────────────── -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-label">Menu</div>
+    <a class="nav-item active" href="#"><span class="nav-icon">📋</span>All Requests</a>
+    <a class="nav-item" href="#"><span class="nav-icon">⚡</span>Urgent Queue</a>
+    <a class="nav-item" href="#"><span class="nav-icon">✅</span>Delivered</a>
+    <a class="nav-item" href="#"><span class="nav-icon">📊</span>Analytics</a>
+    <div class="sidebar-label">Settings</div>
+    <a class="nav-item" href="#"><span class="nav-icon">🏢</span>NGO Profile</a>
+    <a class="nav-item" href="#"><span class="nav-icon">🔔</span>Notifications</a>
+    <div class="sidebar-footer">
+      <a class="nav-item" href="#" style="color:var(--muted)"><span class="nav-icon">🚪</span>Logout</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+      <div>
+        <h1>Food Requests</h1>
+        <p>Manage incoming donations and coordinate deliveries · sorted by priority</p>
+      </div>
+      <button class="btn btn-accept" onclick="loadRequests()" style="padding:.6rem 1.1rem;font-size:.85rem">
+        ↺ Refresh
+      </button>
+    </div>
+
+    <!-- KPI ROW -->
+    <div class="kpi-row" id="kpiRow">
+      <div class="kpi"><div class="kpi-label">Total Requests</div><div class="kpi-value" id="kpiTotal">–</div><div class="kpi-sub">all time</div></div>
+      <div class="kpi urgent"><div class="kpi-label">Urgent</div><div class="kpi-value" id="kpiUrgent">–</div><div class="kpi-sub">need immediate action</div></div>
+      <div class="kpi"><div class="kpi-label">Pending</div><div class="kpi-value" id="kpiPending">–</div><div class="kpi-sub">awaiting acceptance</div></div>
+      <div class="kpi delivered"><div class="kpi-label">Delivered</div><div class="kpi-value" id="kpiDelivered">–</div><div class="kpi-sub">completed today</div></div>
+    </div>
+
+    <!-- POINTS BANNER -->
+    <div class="points-banner">
+      <div class="points-left">
+        <div class="points-icon">⭐</div>
+        <div class="points-info">
+          <strong id="ptsLabel">Loading donor points…</strong>
+          <small id="ptsSub">Earn 10 pts per donation · 5 bonus for urgent</small>
+        </div>
+      </div>
+      <div class="points-bar-wrap"><div class="points-bar" id="ptsBar" style="width:0%"></div></div>
+      <a href="https://pay.google.com" target="_blank" rel="noopener" class="reward-btn locked" id="rewardBtn">
+        🎁 Claim Reward
+      </a>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search by name, food, location…" oninput="renderTable()"/>
+      </div>
+      <select class="filter-select" id="filterStatus" onchange="renderTable()">
+        <option value="">All Statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="Accepted">Accepted</option>
+        <option value="Delivered">Delivered</option>
+      </select>
+      <select class="filter-select" id="filterPriority" onchange="renderTable()">
+        <option value="">All Priorities</option>
+        <option value="High">High (Urgent)</option>
+        <option value="Medium">Medium</option>
+      </select>
+      <div class="toolbar-right">
+        <span class="count-pill" id="countPill">– requests</span>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+      <table class="requests-table">
+        <thead>
+          <tr>
+            <th>Donor</th>
+            <th>Food Type</th>
+            <th>Quantity</th>
+            <th>Location</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <tr><td colspan="7" class="table-loading"><span class="spinner"></span>Loading requests…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   CONFIG  –  swap these URLs when your backend is live
+═══════════════════════════════════════════════════════════════ */
+const API = {
+  GET_REQUESTS : 'https://your-backend.example.com/requests',
+  POST_ACCEPT  : 'https://your-backend.example.com/accept',
+  POST_DELIVER : 'https://your-backend.example.com/deliver',
+};
+
+/* ── Points config ─────────────────────────────────────────── */
+const REWARD_AT = 50;
+
+/* ── In-memory state ───────────────────────────────────────── */
+let requests = [];    // current list
+let donorPoints = {}; // { donorKey: N }
+
+/* ═══════════════════════════════════════════════════════════════
+   SEED DATA  –  realistic mock responses
+═══════════════════════════════════════════════════════════════ */
+const SEED = [
+  { id:'r1', donor:'Priya Sharma',  anonymous:false, food_type:'Cooked Meals',    quantity:'30 servings', location:'Andheri West',  priority:'High',   status:'Pending',   urgent:true,  points:45 },
+  { id:'r2', donor:'Anonymous',     anonymous:true,  food_type:'Packaged Goods',   quantity:'15 kg',       location:'Bandra East',   priority:'High',   status:'Pending',   urgent:true,  points:0  },
+  { id:'r3', donor:'Rahul Mehta',   anonymous:false, food_type:'Fresh Produce',    quantity:'20 kg',       location:'Powai',         priority:'Medium', status:'Accepted',  urgent:false, points:30 },
+  { id:'r4', donor:'Sunita Nair',   anonymous:false, food_type:'Dairy & Eggs',     quantity:'10 litres',   location:'Dadar',         priority:'Medium', status:'Pending',   urgent:false, points:60 },
+  { id:'r5', donor:'Arjun Kapoor',  anonymous:false, food_type:'Bakery Items',     quantity:'40 pieces',   location:'Malad',         priority:'High',   status:'Accepted',  urgent:true,  points:20 },
+  { id:'r6', donor:'Anonymous',     anonymous:true,  food_type:'Cooked Meals',     quantity:'50 servings', location:'Vikhroli',      priority:'High',   status:'Pending',   urgent:true,  points:0  },
+  { id:'r7', donor:'Meera Iyer',    anonymous:false, food_type:'Dry Goods',        quantity:'8 kg',        location:'Thane',         priority:'Medium', status:'Delivered', urgent:false, points:55 },
+  { id:'r8', donor:'Kiran Shah',    anonymous:false, food_type:'Fresh Produce',    quantity:'12 kg',       location:'Goregaon',      priority:'Medium', status:'Pending',   urgent:false, points:10 },
+  { id:'r9', donor:'Anonymous',     anonymous:true,  food_type:'Cooked Meals',     quantity:'25 servings', location:'Chembur',       priority:'High',   status:'Accepted',  urgent:true,  points:0  },
+  { id:'r10',donor:'Deepa Rao',     anonymous:false, food_type:'Packaged Goods',   quantity:'6 kg',        location:'Kurla',         priority:'Medium', status:'Delivered', urgent:false, points:80 },
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   MOCK FETCH  –  simulates real API calls, logs payload
+   Replace with real fetch() calls once backend is ready
+═══════════════════════════════════════════════════════════════ */
+function mockFetch(url, opts={}) {
+  const method = opts.method || 'GET';
+  const body   = opts.body ? JSON.parse(opts.body) : null;
+  console.log(`[FoodBridge] ${method} ${url}`, body ?? '');
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (url === API.GET_REQUESTS) {
+        resolve({ ok:true, json: async () => ({ success:true, data: SEED }) });
+      } else if (url === API.POST_ACCEPT) {
+        const r = requests.find(x => x.id === body.request_id);
+        if (!r) return reject(new Error('Not found'));
+        resolve({ ok:true, json: async () => ({ success:true, request_id: body.request_id, new_status:'Accepted' }) });
+      } else if (url === API.POST_DELIVER) {
+        const r = requests.find(x => x.id === body.request_id);
+        if (!r) return reject(new Error('Not found'));
+        resolve({ ok:true, json: async () => ({ success:true, request_id: body.request_id, new_status:'Delivered' }) });
+      } else {
+        reject(new Error('Unknown endpoint'));
+      }
+    }, 600);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   API WRAPPERS  –  each returns parsed JSON or throws
+═══════════════════════════════════════════════════════════════ */
+
+// GET /requests
+async function apiFetchRequests() {
+  // ── placeholder: replace mockFetch with fetch() when live ──
+  const res  = await mockFetch(API.GET_REQUESTS);
+  if (!res.ok) throw new Error('Failed to load requests');
+  return (await res.json()).data;
+}
+
+// POST /accept  { request_id }
+async function apiAccept(id) {
+  const payload = { request_id: id, accepted_by: 'Akanksha Foundation', timestamp: new Date().toISOString() };
+  // ── placeholder: replace mockFetch with fetch() when live ──
+  const res = await mockFetch(API.POST_ACCEPT, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Accept failed');
+  return await res.json();
+}
+
+// POST /deliver  { request_id }
+async function apiDeliver(id) {
+  const payload = { request_id: id, delivered_by: 'Akanksha Foundation', timestamp: new Date().toISOString() };
+  // ── placeholder: replace mockFetch with fetch() when live ──
+  const res = await mockFetch(API.POST_DELIVER, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error('Deliver failed');
+  return await res.json();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LOAD  &  RENDER
+═══════════════════════════════════════════════════════════════ */
+
+async function loadRequests() {
+  setTableLoading(true);
+  try {
+    const data = await apiFetchRequests();
+    // sort: High first, then by id
+    requests = data.sort((a,b) => {
+      if (a.priority === b.priority) return 0;
+      return a.priority === 'High' ? -1 : 1;
+    });
+    buildDonorPoints();
+    updateKPIs();
+    updatePointsBanner();
+    renderTable();
+  } catch(err) {
+    toast('error', '⚠️ ' + err.message);
+    setTableLoading(false, true);
+  }
+}
+
+function buildDonorPoints() {
+  donorPoints = {};
+  requests.forEach(r => {
+    if (!r.anonymous) {
+      const k = r.donor.toLowerCase();
+      donorPoints[k] = r.points; // use points from server payload
+    }
+  });
+}
+
+function updateKPIs() {
+  document.getElementById('kpiTotal').textContent     = requests.length;
+  document.getElementById('kpiUrgent').textContent    = requests.filter(r => r.urgent).length;
+  document.getElementById('kpiPending').textContent   = requests.filter(r => r.status==='Pending').length;
+  document.getElementById('kpiDelivered').textContent = requests.filter(r => r.status==='Delivered').length;
+}
+
+function updatePointsBanner() {
+  // Show points for the first non-anonymous donor (simulating logged-in donor)
+  const loggedDonor = requests.find(r => !r.anonymous);
+  if (!loggedDonor) return;
+
+  const pts     = loggedDonor.points;
+  const pct     = Math.min((pts / REWARD_AT) * 100, 100);
+  const name    = loggedDonor.donor.split(' ')[0];
+
+  document.getElementById('ptsLabel').textContent =
+    `${name}'s Points: ${pts} / ${REWARD_AT}`;
+  document.getElementById('ptsSub').textContent =
+    pts >= REWARD_AT
+      ? '🏆 Reward unlocked! Claim your cashback via Google Pay.'
+      : `${REWARD_AT - pts} more points to unlock your reward`;
+  document.getElementById('ptsBar').style.width = pct + '%';
+
+  const btn = document.getElementById('rewardBtn');
+  if (pts >= REWARD_AT) btn.classList.remove('locked');
+  else btn.classList.add('locked');
+}
+
+function getFiltered() {
+  const q  = document.getElementById('searchInput').value.toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const pr = document.getElementById('filterPriority').value;
+
+  return requests.filter(r => {
+    const matchQ  = !q || r.donor.toLowerCase().includes(q)
+                        || r.food_type.toLowerCase().includes(q)
+                        || r.location.toLowerCase().includes(q);
+    const matchSt = !st || r.status === st;
+    const matchPr = !pr || r.priority === pr;
+    return matchQ && matchSt && matchPr;
+  });
+}
+
+function renderTable() {
+  const filtered = getFiltered();
+  document.getElementById('countPill').textContent = `${filtered.length} request${filtered.length!==1?'s':''}`;
+
+  const tbody = document.getElementById('tableBody');
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-msg">No requests match your filters.</div>
+    </td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((r, i) => {
+    const isUrgent  = r.priority === 'High';
+    const initials  = r.anonymous ? '?' : r.donor.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const pts       = r.anonymous ? '' : `<div class="donor-pts">${r.points} pts${r.points>=REWARD_AT?' 🏆':''}</div>`;
+    const foodEmoji = { 'Cooked Meals':'🍲','Packaged Goods':'📦','Fresh Produce':'🥦','Dairy & Eggs':'🥚','Bakery Items':'🥐','Dry Goods':'🌾','Packaged / Dry Goods':'📦' };
+    const emoji     = foodEmoji[r.food_type] || '🍱';
+
+    const actions = r.status === 'Pending'
+      ? `<button class="btn btn-accept" onclick="acceptRequest('${r.id}',this)">✓ Accept</button>`
+      : r.status === 'Accepted'
+        ? `<button class="btn btn-deliver" onclick="deliverRequest('${r.id}',this)">🚚 Deliver</button>`
+        : `<span class="btn btn-done">✅ Done</span>`;
+
+    return `<tr class="${isUrgent ? 'row-urgent' : ''}" id="row-${r.id}" style="animation-delay:${i*0.04}s">
+      <td>
+        <div class="donor-cell">
+          <div class="avatar ${r.anonymous?'anon':''}">${initials}</div>
+          <div>
+            <div class="donor-name">${r.donor}</div>
+            ${pts}
+          </div>
+        </div>
+      </td>
+      <td><span class="food-chip">${emoji} ${r.food_type}</span></td>
+      <td>${r.quantity}</td>
+      <td class="loc-cell"><span>📍 ${r.location}</span></td>
+      <td>
+        ${isUrgent ? `<span class="urgent-dot"></span>` : ''}
+        <span class="badge badge-${r.priority.toLowerCase()}">${r.priority}</span>
+      </td>
+      <td><span class="badge badge-${r.status.toLowerCase()}">${r.status}</span></td>
+      <td><div class="actions">${actions}</div></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ACTIONS
+═══════════════════════════════════════════════════════════════ */
+
+async function acceptRequest(id, btn) {
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="border-top-color:var(--green);border-color:rgba(255,255,255,.4)"></span>';
+
+  try {
+    const data = await apiAccept(id);
+    const r = requests.find(x => x.id === id);
+    if (r) {
+      r.status = 'Accepted';
+      r.points = (r.points || 0) + 10 + (r.urgent ? 5 : 0); // award points
+    }
+    updateKPIs();
+    updatePointsBanner();
+    renderTable();
+    toast('success', `✓ Request from ${requests.find(x=>x.id===id)?.donor ?? id} accepted.`);
+  } catch(err) {
+    toast('error', '⚠️ ' + err.message);
+    btn.disabled = false;
+    btn.innerHTML = '✓ Accept';
+  }
+}
+
+async function deliverRequest(id, btn) {
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner" style="border-top-color:var(--blue);border-color:rgba(59,130,246,.25)"></span>';
+
+  try {
+    await apiDeliver(id);
+    const r = requests.find(x => x.id === id);
+    if (r) r.status = 'Delivered';
+    updateKPIs();
+    renderTable();
+    toast('success', `🚚 Delivered! Great work by the team.`);
+  } catch(err) {
+    toast('error', '⚠️ ' + err.message);
+    btn.disabled = false;
+    btn.innerHTML = '🚚 Deliver';
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   UI HELPERS
+═══════════════════════════════════════════════════════════════ */
+
+function setTableLoading(on, error=false) {
+  if (on) {
+    document.getElementById('tableBody').innerHTML =
+      `<tr><td colspan="7" class="table-loading"><span class="spinner"></span>Loading requests from server…</td></tr>`;
+  } else if (error) {
+    document.getElementById('tableBody').innerHTML =
+      `<tr><td colspan="7" class="empty-state"><div class="empty-icon">❌</div><div class="empty-msg">Failed to load requests. Check your connection and try again.</div></td></tr>`;
+  }
+}
+
+function toast(type, msg, duration=3500) {
+  const container = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(), 300); }, duration);
+}
+async function loadRequests() {
+    let res = await fetch("http://127.0.0.1:5000/requests");
+    let requests = await res.json();
+    let container = document.getElementById("requestsContainer");
+    container.innerHTML = "";
+    requests.forEach(r => {
+        container.innerHTML += `
+            <div class="request-card ${r.priority.toLowerCase()}">
+                <p>${r.name}</p>
+                <p>${r.food} (${r.quantity})</p>
+                <p>${r.location}</p>
+                <p>Status: ${r.status}</p>
+                <button onclick="accept(${r.id})">Accept</button>
+                <button onclick="deliver(${r.id})">Deliver</button>
+            </div>`;
+    });
+}
+
+/* ── Boot ──────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', loadRequests);
+</script>
+</body>
+</html>

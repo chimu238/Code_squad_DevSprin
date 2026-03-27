@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FoodBridge – Dignified Food Distribution</title>
+<link href="https://fonts.googleapis.com/css2?family=Clash+Display:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --green: #2E8B57;
+    --green-light: #3CB371;
+    --green-pale: #e8f5ee;
+    --orange: #FFA500;
+    --orange-pale: #fff4e0;
+    --bg: #f5f5f5;
+    --white: #ffffff;
+    --text: #333333;
+    --text-muted: #777;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.07);
+    --shadow-md: 0 6px 24px rgba(0,0,0,0.10);
+    --shadow-lg: 0 16px 48px rgba(0,0,0,0.14);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px;
+    height: 64px;
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(46,139,87,0.10);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s;
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Clash Display', sans-serif;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--green);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--orange); }
+  .nav-logo svg { width: 32px; height: 32px; }
+  .nav-links { display: flex; gap: 8px; align-items: center; }
+  .nav-links a {
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.9rem; font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .nav-links a:hover { background: var(--green-pale); color: var(--green); }
+  .nav-cta {
+    background: var(--green) !important;
+    color: var(--white) !important;
+    box-shadow: 0 4px 14px rgba(46,139,87,0.3);
+  }
+  .nav-cta:hover { background: var(--green-light) !important; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(46,139,87,0.4) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 60%, #52c47d 100%);
+    padding: 140px 40px 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 50px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(8px);
+  }
+  .hero h1 {
+    font-family: 'Clash Display', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.12;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .hero h1 em { font-style: normal; color: #ffd580; }
+  .hero-tagline {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.06em;
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+  .hero-tagline span {
+    display: inline-block;
+    padding: 0 12px;
+    border-right: 1px solid rgba(255,255,255,0.4);
+  }
+  .hero-tagline span:last-child { border-right: none; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #fff;
+    color: var(--green);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 16px 36px;
+    border-radius: 50px;
+    border: none; cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+    transition: all 0.25s cubic-bezier(.34,1.56,.64,1);
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 14px 36px rgba(0,0,0,0.25);
+  }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent;
+    color: #fff;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 16px 28px;
+    border-radius: 50px;
+    border: 2px solid rgba(255,255,255,0.5);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-left: 12px;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.15); border-color: #fff; }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 48px;
+    margin-top: 56px;
+    position: relative;
+  }
+  .stat { color: #fff; text-align: center; }
+  .stat-num { font-family: 'Clash Display', sans-serif; font-size: 2rem; font-weight: 700; color: #ffd580; }
+  .stat-label { font-size: 0.82rem; opacity: 0.85; letter-spacing: 0.04em; }
+
+  /* ── WAVE ── */
+  .wave-divider { display: block; margin-bottom: -4px; }
+
+  /* ── FEATURES ── */
+  .section { padding: 80px 40px; }
+  .section-title {
+    text-align: center;
+    font-family: 'Clash Display', sans-serif;
+    font-size: 2rem; font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .section-sub {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin-bottom: 48px;
+  }
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .feature-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 36px 32px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--green), var(--green-light));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .feature-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+  .feature-card:hover::before { transform: scaleX(1); }
+  .feature-icon {
+    width: 56px; height: 56px;
+    background: var(--green-pale);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+  .feature-card h3 {
+    font-family: 'Clash Display', sans-serif;
+    font-size: 1.2rem; font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--green);
+  }
+  .feature-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.65; }
+
+  /* ── HOW IT WORKS ── */
+  .how-section { background: var(--white); }
+  .steps { display: flex; justify-content: center; gap: 0; max-width: 960px; margin: 0 auto; flex-wrap: wrap; }
+  .step {
+    flex: 1; min-width: 180px;
+    text-align: center;
+    padding: 24px 20px;
+    position: relative;
+  }
+  .step:not(:last-child)::after {
+    content: '→';
+    position: absolute; right: -12px; top: 36px;
+    color: var(--green-light);
+    font-size: 1.4rem;
+  }
+  .step-num {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    color: #fff;
+    font-family: 'Clash Display', sans-serif;
+    font-size: 1.2rem; font-weight: 700;
+    box-shadow: 0 6px 20px rgba(46,139,87,0.3);
+  }
+  .step h4 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .step p { font-size: 0.85rem; color: var(--text-muted); }
+
+  /* ── DONATE FORM ── */
+  .donate-section { background: var(--bg); }
+  .form-card {
+    max-width: 620px; margin: 0 auto;
+    background: var(--white);
+    border-radius: 18px;
+    box-shadow: var(--shadow-md);
+    padding: 48px 48px 40px;
+    border: 1px solid rgba(46,139,87,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  .form-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 5px;
+    background: linear-gradient(90deg, var(--green), var(--green-light), #52c47d);
+  }
+  .form-title {
+    font-family: 'Clash Display', sans-serif;
+    font-size: 1.6rem; font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .form-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 32px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+  .form-group input, .form-group select, .form-group textarea {
+    padding: 12px 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    background: var(--bg);
+    transition: all 0.2s;
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--green);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(46,139,87,0.10);
+  }
+  .checkboxes { display: flex; gap: 28px; margin: 8px 0; }
+  .checkbox-wrap { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .checkbox-wrap input[type=checkbox] { accent-color: var(--green); width: 17px; height: 17px; cursor: pointer; }
+  .checkbox-wrap span { font-size: 0.9rem; font-weight: 500; }
+  .urgent-badge-label { color: var(--orange); }
+  .btn-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    border: none; cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0 6px 20px rgba(46,139,87,0.3);
+    transition: all 0.25s cubic-bezier(.34,1.56,.64,1);
+    letter-spacing: 0.02em;
+  }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(46,139,87,0.4);
+  }
+  .reward-toast {
+    display: none;
+    margin-top: 24px;
+    background: linear-gradient(135deg, #e8f5ee, #d0f0e0);
+    border: 1.5px solid var(--green-light);
+    border-radius: var(--radius-sm);
+    padding: 20px 24px;
+    animation: slideUp 0.4s ease;
+  }
+  .reward-toast.show { display: block; }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reward-toast .points {
+    font-family: 'Clash Display', sans-serif;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--green);
+  }
+  .reward-toast p { font-size: 0.9rem; color: #444; margin-top: 4px; }
+  .gpay-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #000; color: #fff;
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 0.78rem; font-weight: 600;
+    margin-top: 10px;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── DASHBOARD ── */
+  .dashboard-section { background: #eef3f1; border-top: 1px solid rgba(46,139,87,0.1); }
+  .dashboard-header {
+    display: flex; justify-content: space-between; align-items: center;
+    max-width: 1200px; margin: 0 auto 32px;
+    flex-wrap: wrap; gap: 16px;
+
+  }
+
+  .dashboard-header h2 {
+    font-family: 'Clash Display', sans-serif;
+    font-size: 1.8rem; font-weight: 700;
+    color: var(--text);
+    
+  }
+  .filter-tabs { display: flex; gap: 8px; }
+  .tab {
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.85rem; font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid #ddd;
+    background: var(--white);
+    color: var(--text-muted);
+    transition: all 0.2s;
+  }
+  .tab.active, .tab:hover {
+    background: var(--green);
+    color: #fff;
+    border-color: var(--green);
+    box-shadow: 0 4px 14px rgba(46,139,87,0.25);
+  }
+  .requests-grid {
+    max-width: 1200px; margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+  }
+  .request-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(0,0,0,0.05);
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .request-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+  .request-card.urgent { border-left: 4px solid var(--orange); }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .card-title { font-family: 'Clash Display', sans-serif; font-size: 1.05rem; font-weight: 600; }
+  .badge {
+    padding: 4px 12px; border-radius: 50px;
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .badge-urgent { background: var(--orange-pale); color: var(--orange); }
+  .badge-normal { background: var(--green-pale); color: var(--green); }
+  .badge-accepted { background: #e8eaff; color: #5b6ae0; }
+  .badge-delivered { background: #e8f5ee; color: #27a060; }
+  .card-meta { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .meta-row { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--text-muted); }
+  .meta-row strong { color: var(--text); }
+  .card-actions { display: flex; gap: 10px; }
+  .btn-accept, .btn-deliver {
+    flex: 1; padding: 10px; border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 700;
+    cursor: pointer; border: none;
+    transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
+  }
+  .btn-accept {
+    background: var(--green-pale); color: var(--green);
+    border: 1.5px solid rgba(46,139,87,0.2);
+  }
+  .btn-accept:hover { background: var(--green); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(46,139,87,0.3); }
+  .btn-deliver {
+    background: var(--orange-pale); color: var(--orange);
+    border: 1.5px solid rgba(255,165,0,0.2);
+  }
+  .btn-deliver:hover { background: var(--orange); color: #fff; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,165,0,0.3); }
+  .progress-section { margin-top: 14px; padding-top: 14px; border-top: 1px dashed #eee; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 6px; }
+  .progress-label span { color: var(--text-muted); }
+  .progress-label strong { color: var(--green); }
+  .progress-bar { height: 6px; background: #e8e8e8; border-radius: 50px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 50px; background: linear-gradient(90deg, var(--green), var(--green-light)); transition: width 0.6s ease; }
+
+  /* ── DONOR LEADERBOARD ── */
+  .leaderboard { max-width: 1200px; margin: 40px auto 0; }
+  .leaderboard h3 {
+    font-family: 'Clash Display', sans-serif;
+    font-size: 1.2rem; font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .leaderboard-list { display: flex; flex-direction: column; gap: 10px; }
+  .donor-row {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+  }
+  .donor-row:hover { box-shadow: var(--shadow-md); }
+  .donor-rank {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  .rank-1 { background: #ffd700; color: #7a5c00; }
+  .rank-2 { background: #c0c0c0; color: #555; }
+  .rank-3 { background: #cd7f32; color: #fff; }
+  .rank-n { background: var(--green-pale); color: var(--green); }
+  .donor-name { font-weight: 600; font-size: 0.95rem; min-width: 130px; }
+  .donor-progress { flex: 1; }
+  .donor-pts { font-family: 'Clash Display', sans-serif; font-size: 1rem; font-weight: 700; color: var(--green); white-space: nowrap; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: rgba(46,139,87,0.9);
+    color: rgba(255,255,255,0.88);
+    padding: 40px 40px 24px;
+    margin-top: 0;
+  }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+  }
+  .footer-brand { font-family: 'Clash Display', sans-serif; font-size: 1.4rem; font-weight: 700; color: #fff; }
+  .footer-brand p { font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 300; margin-top: 6px; opacity: 0.75; }
+  .footer-links { display: flex; flex-direction: column; gap: 8px; }
+  .footer-links a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+  .footer-links a:hover { color: #fff; }
+  .footer-bottom { text-align: center; margin-top: 20px; font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+
+  /* ── LOADING SPINNER ── */
+  .loading { display: none; text-align: center; padding: 32px; color: var(--text-muted); }
+  .spinner { width: 32px; height: 32px; border: 3px solid #e0e0e0; border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 10px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── STATUS TOAST ── */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: #333; color: #fff;
+    padding: 14px 22px; border-radius: var(--radius-sm);
+    font-size: 0.9rem; font-weight: 500;
+    box-shadow: var(--shadow-lg);
+    display: none;
+    animation: fadeInToast 0.3s ease;
+  }
+  .toast.show { display: block; }
+  @keyframes fadeInToast {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .toast.success { background: var(--green); }
+  .toast.error { background: #e53935; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    nav { padding: 0 20px; }
+    .nav-links a:not(.nav-cta) { display: none; }
+    .hero { padding: 120px 20px 80px; }
+    .hero-stats { gap: 24px; }
+    .section { padding: 60px 20px; }
+    .form-card { padding: 28px 20px; }
+    .form-grid { grid-template-columns: 1fr; }
+    .step:not(:last-child)::after { display: none; }
+    footer { padding: 32px 20px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="19" fill="#2E8B57" stroke="rgba(46,139,87,0.3)" stroke-width="1"/>
+      <text x="20" y="27" text-anchor="middle" font-size="18" fill="white">🌿</text>
+    </svg>
+    Food<span>Bridge</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+    <a href="#donate">Donate</a>
+    <a href="#dashboard">NGO Dashboard</a>
+    <a href="#donate" class="nav-cta">Donate Food</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-badge">🌍 Community Food Network</div>
+  <h1>Bridge the Gap<br>Between <em>Food & Need</em></h1>
+  <p class="hero-tagline">
+    <span>Efficient</span>
+    <span>Fair</span>
+    <span>Dignified Food Distribution</span>
+  </p>
+  <a href="donate.html" class="btn-primary">
+    <span>🍱</span> Donate Food Now
+  </a>
+<a href="dashboard.html" class="btn-primary" onclick="window.location.href='dashboard.html'; return false;">
+  View Dashboard →
+</a>
+<script>
+  // Ensure page is fully loaded
+  document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("viewDashboardBtn").addEventListener("click", function() {
+          // Open dashboard.html in same tab
+          window.location.href = "dashboard.html";
+
+          // Agar new tab me open karna ho
+          // window.open("dashboard.html", "_blank");
+      });
+  });
+</script>
+
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">2,400+</div><div class="stat-label">Meals Donated</div></div>
+    <div class="stat"><div class="stat-num">186</div><div class="stat-label">Active Donors</div></div>
+    <div class="stat"><div class="stat-num">34</div><div class="stat-label">NGO Partners</div></div>
+  </div>
+</section>
+
+<!-- WAVE -->
+<svg class="wave-divider" viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="width:100%;display:block;background:#f5f5f5;">
+  <path d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z" fill="#3CB371" opacity="0.15"/>
+  <path d="M0,40 C480,10 960,60 1440,40 L1440,60 L0,60 Z" fill="#2E8B57" opacity="0.08"/>
+</svg>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="hero-badge" style="display:inline-block;background:var(--green-pale);color:var(--green);border:1px solid rgba(46,139,87,0.2);margin-bottom:14px;">Why FoodBridge?</div>
+  <h2 class="section-title">Built for Impact, Built for People</h2>
+  <p class="section-sub">Three core pillars that make every donation count</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Efficient</h3>
+      <p>Smart priority-based allocation ensures food reaches where it's needed most, first. Our algorithm balances urgency, quantity, and proximity for maximum impact.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚖️</div>
+      <h3>Fair</h3>
+      <p>NGO daily limits and location-based allocation ensure no single organization is overwhelmed, and communities across regions receive equitable support.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛡️</div>
+      <h3>Dignified</h3>
+      <p>Anonymous requests protect the privacy of recipients. Everyone deserves help without judgment — our platform ensures that with discreet, respectful handling.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section how-section" id="how">
+  <h2 class="section-title">How It Works</h2>
+  <p class="section-sub">From donation to delivery in four simple steps</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h4>Donate</h4>
+      <p>Fill in food details and submit your donation</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h4>Match</h4>
+      <p>System matches NGOs based on location & need</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h4>Accept</h4>
+      <p>NGO reviews and accepts the donation request</p>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <h4>Deliver</h4>
+      <p>Food is picked up or delivered to recipients</p>
+    </div>
+  </div>
+</section>
+
+<!-- DONATE FORM -->
+<section class="section donate-section" id="donate">
+  <h2 class="section-title">Make a Donation</h2>
+  <p class="section-sub">Every meal you share earns you points & rewards</p>
+  <div class="form-card">
+    <div class="form-title">🍱 Donate Food</div>
+    <p class="form-sub">Fill in the details below and we'll handle the rest</p>
+    <div class="form-grid" id="donateForm">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="donorName" placeholder="e.g. Priya Sharma" />
+      </div>
+      <div class="form-group">
+        <label>Location / Area</label>
+        <input type="text" id="donorLocation" placeholder="e.g. Andheri, Mumbai" />
+      </div>
+      <div class="form-group">
+        <label>Food Type</label>
+        <select id="foodType">
+          <option value="">Select food type</option>
+          <option>Cooked Meals</option>
+          <option>Packaged Food</option>
+          <option>Fresh Produce</option>
+          <option>Bakery Items</option>
+          <option>Dairy Products</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Quantity (servings)</label>
+        <input type="number" id="quantity" placeholder="e.g. 20" min="1" />
+      </div>
+      <div class="form-group full">
+        <label>Additional Notes</label>
+        <input type="text" id="notes" placeholder="Allergens, storage notes, pickup window…" />
+      </div>
+      <div class="form-group full">
+        <div class="checkboxes">
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="isUrgent" />
+            <span class="urgent-badge-label">🔴 Mark as Urgent</span>
+          </label>
+          <label class="checkbox-wrap">
+            <input type="checkbox" id="isAnonymous" />
+            <span>🕵️ Stay Anonymous</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <button class="btn-submit" onclick="submitDonation()">🌿 Submit Donation</button>
+    <div class="reward-toast" id="rewardToast">
+      <div class="points">🎉 +<span id="pointsEarned">50</span> Points Earned!</div>
+      <p>Thank you for your donation. Your food will reach those who need it most.</p>
+      <div class="gpay-badge">💳 Redeem via Google Pay once you reach 200 pts</div>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section class="section dashboard-section" id="dashboard">
+  <div class="dashboard-header">
+    <div>
+      <h2>🏢 NGO Dashboard</h2>
+      <p style="color:var(--text-muted);font-size:0.9rem;margin-top:4px;">Active donation requests — sorted by priority</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <div class="filter-tabs">
+        <button class="tab active" onclick="filterRequests('all', this)">All</button>
+        <button class="tab" onclick="filterRequests('urgent', this)">🔴 Urgent</button>
+        <button class="tab" onclick="filterRequests('available', this)">Available</button>
+      </div>
+      <button onclick="loadRequests()" style="background:var(--white);border:1.5px solid #ddd;padding:9px 18px;border-radius:50px;font-size:0.85rem;font-weight:600;cursor:pointer;color:var(--green);transition:all 0.2s;" onmouseover="this.style.background='var(--green-pale)'" onmouseout="this.style.background='var(--white)'">⟳ Refresh</button>
+    </div>
+  </div>
+  <div class="loading" id="loadingSpinner"><div class="spinner"></div>Loading requests…</div>
+  <div class="requests-grid" id="requestsGrid"></div>
+
+  <!-- LEADERBOARD -->
+  <div class="leaderboard" id="leaderboard">
+    <h3>🏆 Top Donors This Month</h3>
+    <div class="leaderboard-list" id="leaderboardList"></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      🌿 FoodBridge
+      <p>Connecting surplus food with communities that need it most.<br>Built with ❤️ for a hunger-free world.</p>
+    </div>
+    <div class="footer-links">
+      <strong style="color:#fff;margin-bottom:4px;display:block;">Quick Links</strong>
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="#donate">Donate Food</a>
+      <a href="#dashboard">NGO Dashboard</a>
+    </div>
+    <div class="footer-links">
+      <strong style="color:#fff;margin-bottom:4px;display:block;">Contact</strong>
+      <a href="#">hello@foodbridge.org</a>
+      <a href="#">+91 98765 43210</a>
+      <a href="#">Partner with Us</a>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2025 FoodBridge. All rights reserved. Made for good.</div>
+</footer>
+
+<!-- STATUS TOAST -->
+<div class="toast" id="statusToast"></div>
+
+<script>
+/* ─── DATA ─── */
+const sampleRequests = [
+  { id: 1, donor: "Priya Sharma", location: "Andheri, Mumbai", food: "Cooked Meals", qty: 40, urgent: true, status: "available", points: 120 },
+  { id: 2, donor: "Anonymous", location: "Bandra, Mumbai", food: "Packaged Food", qty: 15, urgent: false, status: "available", points: 60 },
+  { id: 3, donor: "Rahul Mehta", location: "Dadar, Mumbai", food: "Fresh Produce", qty: 25, urgent: true, status: "accepted", points: 80 },
+  { id: 4, donor: "Sunita Rao", location: "Borivali, Mumbai", food: "Bakery Items", qty: 60, urgent: false, status: "available", points: 90 },
+  { id: 5, donor: "Anonymous", location: "Kurla, Mumbai", food: "Cooked Meals", qty: 30, urgent: true, status: "available", points: 100 },
+  { id: 6, donor: "Aakash Verma", location: "Thane, Mumbai", food: "Dairy Products", qty: 10, urgent: false, status: "delivered", points: 50 },
+];
+
+const donors = [
+  { name: "Priya Sharma", points: 420, max: 500 },
+  { name: "Rahul Mehta", points: 310, max: 500 },
+  { name: "Sunita Rao", points: 260, max: 500 },
+  { name: "Kavita Joshi", points: 190, max: 500 },
+  { name: "Deepak Nair", points: 130, max: 500 },
+];
+
+let currentFilter = 'all';
+let requests = [...sampleRequests];
+
+/* ─── SUBMIT DONATION ─── */
+async function submitDonation() {
+  const name = document.getElementById('donorName').value.trim();
+  const location = document.getElementById('donorLocation').value.trim();
+  const food = document.getElementById('foodType').value;
+  const qty = document.getElementById('quantity').value;
+  const urgent = document.getElementById('isUrgent').checked;
+  const anon = document.getElementById('isAnonymous').checked;
+
+  if (!name || !location || !food || !qty) {
+    showToast('Please fill in all required fields.', 'error'); return;
+  }
+
+  const payload = { name: anon ? 'Anonymous' : name, location, food_type: food, quantity: parseInt(qty), urgent, anonymous: anon };
+
+  try {
+    // Placeholder API call
+    // const res = await fetch('/add', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    await new Promise(r => setTimeout(r, 700)); // simulate latency
+
+    const points = urgent ? Math.floor(qty * 3) : Math.floor(qty * 2);
+    document.getElementById('pointsEarned').textContent = points;
+    document.getElementById('rewardToast').classList.add('show');
+
+    // Add to local requests
+    const newReq = { id: requests.length + 1, donor: anon ? 'Anonymous' : name, location, food, qty: parseInt(qty), urgent, status: 'available', points };
+    requests.unshift(newReq);
+    renderRequests(currentFilter);
+    showToast('Donation submitted successfully! 🎉', 'success');
+  } catch (e) {
+    showToast('Failed to submit. Please try again.', 'error');
+  }
+}
+
+/* ─── LOAD REQUESTS ─── */
+async function loadRequests() {
+  document.getElementById('loadingSpinner').style.display = 'block';
+  document.getElementById('requestsGrid').innerHTML = '';
+  try {
+    // Placeholder: const res = await fetch('/requests'); const data = await res.json();
+    await new Promise(r => setTimeout(r, 600));
+    renderRequests(currentFilter);
+  } finally {
+    document.getElementById('loadingSpinner').style.display = 'none';
+  }
+}
+
+function renderRequests(filter) {
+  const grid = document.getElementById('requestsGrid');
+  let filtered = requests;
+  if (filter === 'urgent') filtered = requests.filter(r => r.urgent);
+  if (filter === 'available') filtered = requests.filter(r => r.status === 'available');
+
+  // Sort: urgent first, then by qty desc
+  filtered = [...filtered].sort((a, b) => (b.urgent - a.urgent) || (b.qty - a.qty));
+
+  grid.innerHTML = filtered.map(r => `
+    <div class="request-card ${r.urgent ? 'urgent' : ''}" id="card-${r.id}">
+      <div class="card-top">
+        <div class="card-title">${r.food}</div>
+        <span class="badge ${r.urgent ? 'badge-urgent' : r.status === 'accepted' ? 'badge-accepted' : r.status === 'delivered' ? 'badge-delivered' : 'badge-normal'}">
+          ${r.urgent ? '🔴 Urgent' : r.status === 'accepted' ? '✅ Accepted' : r.status === 'delivered' ? '📦 Delivered' : '🟢 Available'}
+        </span>
+      </div>
+      <div class="card-meta">
+        <div class="meta-row">📍 <strong>${r.location}</strong></div>
+        <div class="meta-row">👤 <strong>${r.donor}</strong></div>
+        <div class="meta-row">🍽 <strong>${r.qty} servings</strong></div>
+      </div>
+      ${r.status === 'available' ? `<div class="card-actions">
+        <button class="btn-accept" onclick="acceptRequest(${r.id})">✅ Accept</button>
+        <button class="btn-deliver" onclick="deliverRequest(${r.id})">📦 Mark Delivered</button>
+      </div>` : r.status === 'accepted' ? `<div class="card-actions">
+        <button class="btn-deliver" onclick="deliverRequest(${r.id})">📦 Mark Delivered</button>
+      </div>` : `<div style="font-size:0.82rem;color:var(--text-muted);text-align:center;padding:8px 0;">✔ Delivery complete</div>`}
+      <div class="progress-section">
+        <div class="progress-label"><span>Donor Points</span><strong>${r.points} pts</strong></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(r.points/5,100)}%"></div></div>
+      </div>
+    </div>
+  `).join('') || '<p style="color:var(--text-muted);grid-column:1/-1;text-align:center;padding:32px;">No requests found for this filter.</p>';
+}
+
+/* ─── ACCEPT / DELIVER ─── */
+async function acceptRequest(id) {
+  try {
+    // await fetch('/accept', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id}) });
+    await new Promise(r => setTimeout(r, 400));
+    const req = requests.find(r => r.id === id);
+    if (req) { req.status = 'accepted'; renderRequests(currentFilter); }
+    showToast('Request accepted! 🤝', 'success');
+  } catch { showToast('Action failed. Retry.', 'error'); }
+}
+
+async function deliverRequest(id) {
+  try {
+    // await fetch('/deliver', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({id}) });
+    await new Promise(r => setTimeout(r, 400));
+    const req = requests.find(r => r.id === id);
+    if (req) { req.status = 'delivered'; renderRequests(currentFilter); }
+    showToast('Marked as delivered! 📦', 'success');
+  } catch { showToast('Action failed. Retry.', 'error'); }
+}
+
+/* ─── FILTER TABS ─── */
+function filterRequests(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderRequests(filter);
+}
+
+/* ─── LEADERBOARD ─── */
+function renderLeaderboard() {
+  const list = document.getElementById('leaderboardList');
+  list.innerHTML = donors.map((d, i) => `
+    <div class="donor-row">
+      <div class="donor-rank ${i===0?'rank-1':i===1?'rank-2':i===2?'rank-3':'rank-n'}">${i+1}</div>
+      <div class="donor-name">${d.name}</div>
+      <div class="donor-progress">
+        <div class="progress-bar"><div class="progress-fill" style="width:${(d.points/d.max)*100}%"></div></div>
+      </div>
+      <div class="donor-pts">${d.points} pts</div>
+    </div>
+  `).join('');
+}
+
+/* ─── TOAST ─── */
+function showToast(msg, type = '') {
+  const t = document.getElementById('statusToast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ─── NAV SCROLL EFFECT ─── */
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').style.boxShadow = window.scrollY > 20 ? '0 4px 20px rgba(0,0,0,0.10)' : 'var(--shadow-sm)';
+});
+
+/* ─── INIT ─── */
+window.addEventListener('DOMContentLoaded', () => {
+  loadRequests();
+  renderLeaderboard();
+});
+
+
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Landing Page</title>
+</head>
+<body>
+
+<script>
+  // Ensure page is fully loaded
+  document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("viewDashboardBtn").addEventListener("click", function() {
+          // Open dashboard.html in same tab
+          window.location.href = "dashboard.html";
+
+          // Agar new tab me open karna ho
+          // window.open("dashboard.html", "_blank");
+      });
+  });
+</script>
+<section class="section donate-section" id="donate"></section>
+
+
+</body>
+</html>

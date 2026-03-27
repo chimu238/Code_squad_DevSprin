@@ -1,0 +1,77 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f7f7f7;
+}
+
+header {
+    background: url('assets/bg-image.jpg') no-repeat center center;
+    background-size: cover;
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+header .logo {
+    width: 100px;
+    display: block;
+    margin: 0 auto 10px;
+}
+
+h1, h2 {
+    margin: 10px 0;
+}
+
+.donate-section, .dashboard-section {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px #ccc;
+}
+
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.btn {
+    padding: 10px 20px;
+    background: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #21867a;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+.urgent {
+    color: red;
+    font-weight: bold;
+}
+body { font-family: Arial, sans-serif; scroll-behavior: smooth; }
+.tab { cursor: pointer; padding: 10px; display: inline-block; }
+.tab.active { background-color: #ff9900; color: white; }
+.request-card { display: block; border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
